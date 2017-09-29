@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import urllib
+import requests
 import json
 import os
 
@@ -35,14 +36,14 @@ def processRequest(req):
     yql_query = makeYqlQuery(req)
     if yql_query is None:
         return {}
-    yql_url = baseurl + urllib.urlencode({'q': yql_query}) + "&format=json"
+    yql_url = baseurl + urllib.parse.urlencode({'q': yql_query}) + "&format=json"
     print(yql_url)
 
-    result = urllib.urlopen(yql_url).read()
+    result = requests.get(yql_url)
     print("yql result: ")
     print(result)
 
-    data = json.loads(result)
+    data = result.json()
     res = makeWebhookResult(data)
     return res
 
@@ -128,7 +129,6 @@ def makeWebhookResult(data):
         "speech": speech,
         "displayText": speech,
         "data": {"slack": slack_message},
-        # "contextOut": [],
         "source": "apiai-weather-webhook-sample"
     }
 
